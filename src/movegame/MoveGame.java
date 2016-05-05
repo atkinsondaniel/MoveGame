@@ -10,15 +10,15 @@ import java.util.Scanner;
 
 public class MoveGame {
 
-    public static int[][] traps = new int[5][2];
+    public static int[][] enemies = new int[5][2];
     public static int xLoc = 10;
     public static int yLoc = 10;
-    public static int enemyX = 25;
-    public static int enemyY = 25;
+    public static boolean[] rubbish = new boolean[5];
     public static boolean play = true;
     public static String[][] coor = new String[30][30];
     public static int tresX;
     public static int tresY;
+
     public static void main(String[] args) {
         game();
     }
@@ -32,8 +32,9 @@ public class MoveGame {
 
     public static void move() {
         movePlayer();
-        enemyX = moveEnemy(xLoc, enemyX);
-        enemyY = moveEnemy(yLoc, enemyY);
+        moveEnemies(xLoc, yLoc);
+        //moveEnemies(yLoc);
+
     }
 
     public static void movePlayer() {
@@ -103,13 +104,20 @@ public class MoveGame {
         }
     }
 
-    public static int moveEnemy(int p, int e) {
-        if (p < e) {
-            e -= 1;
-        } else if (p > e) {
-            e += 1;
+    public static void moveEnemies(int x, int y) {
+
+        for (int[] trap : enemies) {
+            if (x > trap[0] + 1) {
+                trap[0] += 1;
+            } else if (x < trap[0] + 1) {
+                trap[0] -= 1;
+            }
+            if (y > trap[1] + 1) {
+                trap[1] += 1;
+            } else if (y < trap[1] + 1) {
+                trap[1] -= 1;
+            }
         }
-        return e;
     }
 
     public static boolean isValid(int a) {
@@ -131,16 +139,12 @@ public class MoveGame {
         return valid;
     }
 
-    public static boolean isDead(int pX, int eX, int pY, int eY) {
+    public static boolean isDead(int pX, int pY) {
         boolean life = true;
-        if (pX == eX && pY == eY) {
-            life = false;
-            System.out.println("Lose");
-        }
-        for (int[] trap : traps) {
+        for (int[] trap : enemies) {
             if (pX == trap[0] + 1 && pY == trap[1] + 1) {
                 life = false;
-                System.out.println("Trapped");
+                System.out.println("Dead");
             }
         }
         return life;
@@ -148,9 +152,10 @@ public class MoveGame {
 
     public static void makeTraps() {
         Random random = new Random();
-        for (int[] trap : traps) {
+        for (int[] trap : enemies) {
             for (int q = 0; q < trap.length; q++) {
                 trap[q] = random.nextInt(30);
+                rubbish[q] = false;
             }
         }
         tresX = random.nextInt(29) + 1;
@@ -158,31 +163,44 @@ public class MoveGame {
     }
 
     public static void runGame() {
+        play = isDead(xLoc, yLoc);
+        checkCollisions();
         for (int i = 0; i < coor.length; i++) {
             for (int q = 0; q < coor[i].length; q++) {
 
                 if (q == xLoc - 1 && i == yLoc - 1) {
-                    coor[q][i] = "U";
-                } else if (q == enemyX - 1 && i == enemyY - 1) {
-                    coor[q][i] = "E";
+                    coor[q][i] = "U ";
                 } else if (q == 0 || q == 29 || i == 0 || i == 29) {
-                    coor[q][i] = "X";
-                } else if (q == tresX - 1 && i == tresY - 1) {
-                    coor[q][i] = "T";
-                }else {
-                    coor[q][i] = ".";
+                    coor[q][i] = "X ";
+                } else {
+                    coor[q][i] = ". ";
                 }
-                for (int[] trap : traps) {
-                    if (q == trap[0] && i == trap[1]) {
-                        coor[q][i] = "*";
+                for (int r = 0; r < enemies.length; r++) {
+                    if (q == enemies[r][0] && i == enemies[r][1] && rubbish[r] == false) {
+                        coor[q][i] = "E ";
+                    } else if (q == enemies[r][0] && i == enemies[r][1] && rubbish[r] == true) {
+                        coor[q][i] = "R ";
                     }
+                    
                 }
                 System.out.print(coor[q][i]);
             }
             System.out.println("");
         }
+        System.out.println(xLoc + "," + yLoc);
+        System.out.println(enemies[0][0] + "," + enemies[0][1]);
         move();
-        play = isDead(xLoc, enemyX, yLoc, enemyY);
 
+    }
+
+    public static void checkCollisions() {
+        for (int i = 0; i < enemies.length; i++) {
+            for (int j = i + 1; j < enemies.length; j++) {
+                if (enemies[i][0] == enemies [j][0] && enemies[i][1] == enemies [j][1]) {
+                    rubbish[i] = true;
+                    rubbish[j] = true;
+                }
+            }
+        }
     }
 }
