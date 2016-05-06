@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class MoveGame {
 
-    public static int[][] enemies = new int[5][2];
+    public static int[][] enemies = new int[2][2];
     public static int xLoc = 10;
     public static int yLoc = 10;
     public static boolean[] rubbish = new boolean[5];
@@ -18,6 +18,7 @@ public class MoveGame {
     public static String[][] coor = new String[30][30];
     public static int tresX;
     public static int tresY;
+    public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         game();
@@ -31,14 +32,13 @@ public class MoveGame {
     }
 
     public static void move() {
+        
         movePlayer();
-        moveEnemies(xLoc, yLoc);
-        //moveEnemies(yLoc);
-
+moveEnemies(xLoc, yLoc);
     }
 
     public static void movePlayer() {
-        Scanner scanner = new Scanner(System.in);
+
         String nope = "Out of Bounds";
         System.out.println("Direction?");
         String resp = scanner.next().toUpperCase();
@@ -102,20 +102,25 @@ public class MoveGame {
                 System.out.println(nope);
             }
         }
+        if (resp.equals("T")) {
+            teleport();
+        }
     }
 
     public static void moveEnemies(int x, int y) {
 
-        for (int[] trap : enemies) {
-            if (x > trap[0] + 1) {
-                trap[0] += 1;
-            } else if (x < trap[0] + 1) {
-                trap[0] -= 1;
-            }
-            if (y > trap[1] + 1) {
-                trap[1] += 1;
-            } else if (y < trap[1] + 1) {
-                trap[1] -= 1;
+        for (int i = 0; i < enemies.length; i++) {
+            if (!rubbish[i]) {
+                if (x > enemies[i][0] + 1) {
+                    enemies[i][0] += 1;
+                } else if (x < enemies[i][0] + 1) {
+                    enemies[i][0] -= 1;
+                }
+                if (y > enemies[i][1] + 1) {
+                    enemies[i][1] += 1;
+                } else if (y < enemies[i][1] + 1) {
+                    enemies[i][1] -= 1;
+                }
             }
         }
     }
@@ -181,7 +186,7 @@ public class MoveGame {
                     } else if (q == enemies[r][0] && i == enemies[r][1] && rubbish[r] == true) {
                         coor[q][i] = "R ";
                     }
-                    
+
                 }
                 System.out.print(coor[q][i]);
             }
@@ -189,18 +194,38 @@ public class MoveGame {
         }
         System.out.println(xLoc + "," + yLoc);
         System.out.println(enemies[0][0] + "," + enemies[0][1]);
+        System.out.println(enemies[1][0] + "," + enemies[1][1]);
         move();
+        play = isWin();
 
     }
 
     public static void checkCollisions() {
         for (int i = 0; i < enemies.length; i++) {
             for (int j = i + 1; j < enemies.length; j++) {
-                if (enemies[i][0] == enemies [j][0] && enemies[i][1] == enemies [j][1]) {
+                if (enemies[i][0] == enemies[j][0] && enemies[i][1] == enemies[j][1]) {
                     rubbish[i] = true;
                     rubbish[j] = true;
                 }
             }
         }
+
+    }
+
+    public static void teleport() {
+        System.out.println("X Coordinate:");
+        xLoc = scanner.nextInt();
+        System.out.println("Y Coordinate:");
+        yLoc = scanner.nextInt();
+    }
+
+    public static boolean isWin() {
+        boolean winner = true;
+        for(int i = 0; i < rubbish.length; i++) {
+            if(rubbish[i]) {
+                winner = false; 
+            }
+        }
+        return winner;
     }
 }
