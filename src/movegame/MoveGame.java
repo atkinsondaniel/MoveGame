@@ -10,31 +10,41 @@ import java.util.Scanner;
 
 public class MoveGame {
 
-    public static int[][] enemies = new int[2][2];
+    public static int nEnemies = 0;
+    public static int[][] enemies;
     public static int xLoc = 10;
     public static int yLoc = 10;
-    public static boolean[] rubbish = new boolean[5];
+    public static boolean[] rubbish;
     public static boolean play = true;
     public static String[][] coor = new String[30][30];
     public static int tresX;
     public static int tresY;
     public static Scanner scanner = new Scanner(System.in);
+    public static boolean wonPrevLev = true;
 
     public static void main(String[] args) {
+        welcome();
         game();
     }
 
     public static void game() {
+        
+        enemies = new int[nEnemies][2];
+        rubbish = new boolean[nEnemies];
         makeTraps();
         while (play) {
+
             runGame();
+        }
+        if (wonPrevLev) {
+            nextLevel();
         }
     }
 
     public static void move() {
-        
+
         movePlayer();
-moveEnemies(xLoc, yLoc);
+        moveEnemies(xLoc, yLoc);
     }
 
     public static void movePlayer() {
@@ -103,7 +113,10 @@ moveEnemies(xLoc, yLoc);
             }
         }
         if (resp.equals("T")) {
-            teleport();
+            teleport(true);
+        }
+        if (resp.equals("U")) {
+            teleport(false);
         }
     }
 
@@ -146,11 +159,16 @@ moveEnemies(xLoc, yLoc);
 
     public static boolean isDead(int pX, int pY) {
         boolean life = true;
-        for (int[] trap : enemies) {
-            if (pX == trap[0] + 1 && pY == trap[1] + 1) {
+        for (int i = 0; i < enemies.length; i++) {
+            if (pX == enemies[i][0] + 1 && pY == enemies[i][1] + 1) {
                 life = false;
                 System.out.println("Dead");
+                break;
             }
+
+        }
+        if (!life) {
+            wonPrevLev = false;
         }
         return life;
     }
@@ -168,7 +186,7 @@ moveEnemies(xLoc, yLoc);
     }
 
     public static void runGame() {
-        play = isDead(xLoc, yLoc);
+
         checkCollisions();
         for (int i = 0; i < coor.length; i++) {
             for (int q = 0; q < coor[i].length; q++) {
@@ -193,11 +211,12 @@ moveEnemies(xLoc, yLoc);
             System.out.println("");
         }
         System.out.println(xLoc + "," + yLoc);
-        System.out.println(enemies[0][0] + "," + enemies[0][1]);
-        System.out.println(enemies[1][0] + "," + enemies[1][1]);
         move();
-        play = isWin();
 
+        if (!isWin() || !isDead(xLoc, yLoc)) {
+            play = false;
+
+        }
     }
 
     public static void checkCollisions() {
@@ -212,20 +231,48 @@ moveEnemies(xLoc, yLoc);
 
     }
 
-    public static void teleport() {
+    public static void teleport(boolean safe) {
+        Random random = new Random();
+        if (safe) {
         System.out.println("X Coordinate:");
         xLoc = scanner.nextInt();
         System.out.println("Y Coordinate:");
         yLoc = scanner.nextInt();
+        } else {
+            xLoc = random.nextInt(25 + 2);
+            yLoc = random.nextInt(25 + 2);
+        }
     }
 
     public static boolean isWin() {
         boolean winner = true;
-        for(int i = 0; i < rubbish.length; i++) {
-            if(rubbish[i]) {
-                winner = false; 
+        for (int i = 0; i < rubbish.length; i++) {
+            if (!rubbish[i]) {
+                winner = false;
             }
         }
-        return winner;
+        if (winner) {
+            wonPrevLev = true;
+        }
+        return !winner;
+    }
+
+    public static void nextLevel() {
+        play = true;
+        nEnemies += 2;
+        System.out.println("Welcome to level " + nEnemies / 2);
+        game();
+    }
+
+    private static void welcome() {
+        System.out.println("m     m        \"\"#                               \n"
+                + "#  #  #  mmm     #     mmm    mmm   mmmmm   mmm  \n"
+                + "\" #\"# # #\"  #    #    #\"  \"  #\" \"#  # # #  #\"  # \n"
+                + " ## ##\" #\"\"\"\"    #    #      #   #  # # #  #\"\"\"\" \n"
+                + " #   #  \"#mm\"    \"mm  \"#mm\"  \"#m#\"  # # #  \"#mm\" ");
+        System.out.println("N,S,E,W and their combinations move you.");
+        System.out.println("Make the enemies crash into each other to win.");
+        System.out.println("\"T\" will allow you to teleport to a certain location.");
+        System.out.println("\"R\" will teleport you to a random location.");
     }
 }
