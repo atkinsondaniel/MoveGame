@@ -10,17 +10,17 @@ import java.util.Scanner;
 
 public class MoveGame {
 
-    public static int nEnemies = 0;
-    public static int[][] enemies;
-    public static int xLoc = 10;
-    public static int yLoc = 10;
-    public static boolean[] rubbish;
+    public static int nEnemies = 2;
+    static Enemy[] enemies;
+
+    //public static boolean[] rubbish;
     public static boolean play = true;
     public static String[][] coor = new String[30][30];
-    public static int tresX;
-    public static int tresY;
     public static Scanner scanner = new Scanner(System.in);
-    public static boolean wonPrevLev = true;
+    public static boolean wonPrevLev = false;
+
+    public static int moveVal = 1;
+    static Player playerguy = new Player(10, 10);
 
     public static void main(String[] args) {
         welcome();
@@ -28,10 +28,8 @@ public class MoveGame {
     }
 
     public static void game() {
-        
-        enemies = new int[nEnemies][2];
-        rubbish = new boolean[nEnemies];
-        makeTraps();
+        enemies = new Enemy[nEnemies];        
+        makeEnemies();
         while (play) {
 
             runGame();
@@ -44,7 +42,7 @@ public class MoveGame {
     public static void move() {
 
         movePlayer();
-        moveEnemies(xLoc, yLoc);
+        moveEnemies(playerguy.xLoc, playerguy.yLoc);
     }
 
     public static void movePlayer() {
@@ -53,69 +51,73 @@ public class MoveGame {
         System.out.println("Direction?");
         String resp = scanner.next().toUpperCase();
         if (resp.equals("N")) {
-            if (isValid(yLoc - 2)) {
-                yLoc -= 1;
+            if (isValid(playerguy.yLoc - 2)) {
+                playerguy.yLoc -= 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("S")) {
-            if (isValid(yLoc + 2)) {
-                yLoc += 1;
+            if (isValid(playerguy.yLoc + 2)) {
+                playerguy.yLoc += 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("E")) {
-            if (isValid(xLoc + 2)) {
-                xLoc += 1;
+            if (isValid(playerguy.xLoc + 2)) {
+                playerguy.xLoc += 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("W")) {
-            if (isValid(xLoc - 2)) {
-                xLoc -= 1;
+            if (isValid(playerguy.xLoc - 2)) {
+                playerguy.xLoc -= 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("NE")) {
-            if (isValid(xLoc + 2, yLoc - 2)) {
-                xLoc += 1;
-                yLoc -= 1;
+            if (isValid(playerguy.xLoc + 2, playerguy.yLoc - 2)) {
+                playerguy.xLoc += 1;
+                playerguy.yLoc -= 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("NW")) {
-            if (isValid(xLoc - 2, yLoc - 2)) {
-                xLoc -= 1;
-                yLoc -= 1;
+            if (isValid(playerguy.xLoc - 2, playerguy.yLoc - 2)) {
+                playerguy.xLoc -= 1;
+                playerguy.yLoc -= 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("SE")) {
-            if (isValid(xLoc + 2, yLoc + 2)) {
-                xLoc += 1;
-                yLoc += 1;
+            if (isValid(playerguy.xLoc + 2, playerguy.yLoc + 2)) {
+                playerguy.xLoc += 1;
+                playerguy.yLoc += 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("SW")) {
-            if (isValid(xLoc - 2, yLoc + 2)) {
-                xLoc -= 1;
-                yLoc += 1;
+            if (isValid(playerguy.xLoc - 2, playerguy.yLoc + 2)) {
+                playerguy.xLoc -= 1;
+                playerguy.yLoc += 1;
             } else {
                 System.out.println(nope);
             }
         }
         if (resp.equals("T")) {
-            teleport(true);
+            if (playerguy.nTeleports > 0) {
+                teleport(true);
+            } else {
+                System.out.println(nope);
+            }
         }
-        if (resp.equals("U")) {
+        if (resp.equals("R")) {
             teleport(false);
         }
     }
@@ -123,16 +125,16 @@ public class MoveGame {
     public static void moveEnemies(int x, int y) {
 
         for (int i = 0; i < enemies.length; i++) {
-            if (!rubbish[i]) {
-                if (x > enemies[i][0] + 1) {
-                    enemies[i][0] += 1;
-                } else if (x < enemies[i][0] + 1) {
-                    enemies[i][0] -= 1;
+            if (!enemies[i].rubbish) {
+                if (x > enemies[i].x + 1) {
+                    enemies[i].x += moveVal;
+                } else if (x < enemies[i].x + 1) {
+                    enemies[i].x -= enemies[i].moveVal;
                 }
-                if (y > enemies[i][1] + 1) {
-                    enemies[i][1] += 1;
-                } else if (y < enemies[i][1] + 1) {
-                    enemies[i][1] -= 1;
+                if (y > enemies[i].y + 1) {
+                    enemies[i].y += moveVal;
+                } else if (y < enemies[i].y + 1) {
+                    enemies[i].y -= enemies[i].moveVal;
                 }
             }
         }
@@ -160,9 +162,14 @@ public class MoveGame {
     public static boolean isDead(int pX, int pY) {
         boolean life = true;
         for (int i = 0; i < enemies.length; i++) {
-            if (pX == enemies[i][0] + 1 && pY == enemies[i][1] + 1) {
+            if (pX == enemies[i].x + 1 && pY == enemies[i].y + 1) {
                 life = false;
-                System.out.println("Dead");
+                System.out.println("m     m                          #    \"               # \n"
+                        + " \"m m\"   mmm   m   m          mmm#  mmm     mmm    mmm# \n"
+                        + "  \"#\"   #\" \"#  #   #         #\" \"#    #    #\"  #  #\" \"# \n"
+                        + "   #    #   #  #   #         #   #    #    #\"\"\"\"  #   # \n"
+                        + "   #    \"#m#\"  \"mm\"#         \"#m##  mm#mm  \"#mm\"  \"#m## \n"
+                        + "You survied for " + nEnemies / 2 + " levels.");
                 break;
             }
 
@@ -173,16 +180,12 @@ public class MoveGame {
         return life;
     }
 
-    public static void makeTraps() {
+    public static void makeEnemies() {
         Random random = new Random();
-        for (int[] trap : enemies) {
-            for (int q = 0; q < trap.length; q++) {
-                trap[q] = random.nextInt(30);
-                rubbish[q] = false;
-            }
+        for (int i = 0; i < enemies.length; i++) {
+
+            enemies[i] = new Enemy(random.nextInt(25) + 2,random.nextInt(25) + 2,false,moveVal);
         }
-        tresX = random.nextInt(29) + 1;
-        tresY = random.nextInt(29) + 1;
     }
 
     public static void runGame() {
@@ -191,7 +194,7 @@ public class MoveGame {
         for (int i = 0; i < coor.length; i++) {
             for (int q = 0; q < coor[i].length; q++) {
 
-                if (q == xLoc - 1 && i == yLoc - 1) {
+                if (q == playerguy.xLoc - 1 && i == playerguy.yLoc - 1) {
                     coor[q][i] = "U ";
                 } else if (q == 0 || q == 29 || i == 0 || i == 29) {
                     coor[q][i] = "X ";
@@ -199,9 +202,9 @@ public class MoveGame {
                     coor[q][i] = ". ";
                 }
                 for (int r = 0; r < enemies.length; r++) {
-                    if (q == enemies[r][0] && i == enemies[r][1] && rubbish[r] == false) {
+                    if (q == enemies[r].x && i == enemies[r].y && enemies[r].rubbish == false) {
                         coor[q][i] = "E ";
-                    } else if (q == enemies[r][0] && i == enemies[r][1] && rubbish[r] == true) {
+                    } else if (q == enemies[r].x && i == enemies[r].y && enemies[r].rubbish == true) {
                         coor[q][i] = "R ";
                     }
 
@@ -210,10 +213,10 @@ public class MoveGame {
             }
             System.out.println("");
         }
-        System.out.println(xLoc + "," + yLoc);
+        System.out.println(playerguy.xLoc + "," + playerguy.yLoc);
         move();
 
-        if (!isWin() || !isDead(xLoc, yLoc)) {
+        if (!isWin() || !isDead(playerguy.xLoc, playerguy.yLoc)) {
             play = false;
 
         }
@@ -222,9 +225,9 @@ public class MoveGame {
     public static void checkCollisions() {
         for (int i = 0; i < enemies.length; i++) {
             for (int j = i + 1; j < enemies.length; j++) {
-                if (enemies[i][0] == enemies[j][0] && enemies[i][1] == enemies[j][1]) {
-                    rubbish[i] = true;
-                    rubbish[j] = true;
+                if (enemies[i].x == enemies[j].x && enemies[i].y == enemies[j].y) {
+                    enemies[i].rubbish = true;
+                    enemies[j].rubbish = true;
                 }
             }
         }
@@ -234,30 +237,46 @@ public class MoveGame {
     public static void teleport(boolean safe) {
         Random random = new Random();
         if (safe) {
-        System.out.println("X Coordinate:");
-        xLoc = scanner.nextInt();
-        System.out.println("Y Coordinate:");
-        yLoc = scanner.nextInt();
+            System.out.println("X Coordinate:");
+            playerguy.xLoc = scanner.nextInt();
+            System.out.println("Y Coordinate:");
+            playerguy.yLoc = scanner.nextInt();
+            playerguy.nTeleports -= 1;
+            System.out.println("You have " + playerguy.nTeleports + " remaining");
         } else {
-            xLoc = random.nextInt(25 + 2);
-            yLoc = random.nextInt(25 + 2);
+            playerguy.xLoc = random.nextInt(25) + 2;
+            playerguy.yLoc = random.nextInt(25) + 2;
         }
     }
 
     public static boolean isWin() {
         boolean winner = true;
-        for (int i = 0; i < rubbish.length; i++) {
-            if (!rubbish[i]) {
+        for (int i = 0; i < enemies.length; i++) {
+            if (!enemies[i].rubbish) {
                 winner = false;
             }
         }
         if (winner) {
             wonPrevLev = true;
+            System.out.println("         m                           \"\"#   \n"
+                    + "         #       mmm   m   m   mmm     #   \n"
+                    + "         #      #\"  #  \"m m\"  #\"  #    #   \n"
+                    + "         #      #\"\"\"\"   #m#   #\"\"\"\"    #   \n"
+                    + "         #mmmmm \"#mm\"    #    \"#mm\"    \"mm ");
+            System.out.println("   mmm                       \"\"#             m          \n"
+                    + " m\"   \"  mmm   mmmmm  mmmm     #     mmm   mm#mm   mmm  \n"
+                    + " #      #\" \"#  # # #  #\" \"#    #    #\"  #    #    #\"  # \n"
+                    + " #      #   #  # # #  #   #    #    #\"\"\"\"    #    #\"\"\"\" \n"
+                    + "  \"mmm\" \"#m#\"  # # #  ##m#\"    \"mm  \"#mm\"    \"mm  \"#mm\" ");
+            System.out.println("");
         }
         return !winner;
     }
 
     public static void nextLevel() {
+        if (nEnemies % 10 == 0) {
+            moveVal += 1;
+        }
         play = true;
         nEnemies += 2;
         System.out.println("Welcome to level " + nEnemies / 2);
@@ -274,5 +293,31 @@ public class MoveGame {
         System.out.println("Make the enemies crash into each other to win.");
         System.out.println("\"T\" will allow you to teleport to a certain location.");
         System.out.println("\"R\" will teleport you to a random location.");
+    }
+}
+
+class Player {
+
+    int xLoc;
+    int yLoc;
+    int nTeleports;
+
+    public Player(int x, int y) {
+        this.xLoc = x;
+        this.yLoc = y;
+        this.nTeleports = 5;
+    }
+}
+
+class Enemy {
+    int x;
+    int y; 
+    boolean rubbish;
+    int moveVal;
+    public Enemy(int xLoc, int yLoc, boolean rubbishVal, int moveValcool) {
+        this.x = xLoc;
+        this.y = yLoc;
+        this.rubbish = rubbishVal;
+        this.moveVal = moveValcool;
     }
 }
