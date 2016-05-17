@@ -279,10 +279,21 @@ public class MoveGame {
                         fasEnemies[q].rubbish = true;
                         fasEnemies[q].symbol = "R ";
                     }
-                    if (fasEnemies[q].x == fasEnemies[q + 1].x && fasEnemies[q].y == fasEnemies[q + 1].y) {
+                    if (regEnemies[j].x == fasEnemies[q].x && regEnemies[j].y == fasEnemies[q].y) {
+                        regEnemies[j].rubbish = true;
+                        regEnemies[j].symbol = "R ";
                         fasEnemies[q].rubbish = true;
-                        fasEnemies[q + 1].rubbish = true;
+                        fasEnemies[q].symbol = "R ";
                     }
+                    for (int t = q + 1; t < fasEnemies.length; t++) {
+                        if (regEnemies[i].x == regEnemies[j].x && regEnemies[i].y == regEnemies[j].y) {
+                            fasEnemies[q].rubbish = true;
+                            fasEnemies[q].symbol = "R ";
+                            fasEnemies[t].rubbish = true;
+                            fasEnemies[t].symbol = "R ";
+                        }
+                    }
+
                 }
 
             }
