@@ -195,6 +195,14 @@ public class MoveGame {
         for (int i = 0; i < fasEnemies.length; i++) {
             if (pX == fasEnemies[i].x + 1 && pY == fasEnemies[i].y + 1) {
                 life = false;
+                System.out.println("      \\_/\n"
+                        + "     (* *)\n"
+                        + "    __)#(__\n"
+                        + "   ( )...( )(_)\n"
+                        + "   || |_| ||//\n"
+                        + ">==() | | ()/\n"
+                        + "    _(___)_\n"
+                        + "   [-]   [-]");
                 System.out.println("m     m                          #    \"               # \n"
                         + " \"m m\"   mmm   m   m          mmm#  mmm     mmm    mmm# \n"
                         + "  \"#\"   #\" \"#  #   #         #\" \"#    #    #\"  #  #\" \"# \n"
@@ -330,6 +338,15 @@ public class MoveGame {
         }
         if (winner) {
             wonPrevLev = true;
+            System.out.println("     ,     ,\n"
+                    + "    (\\____/)\n"
+                    + "     (_oo_)\n"
+                    + "       (O)\n"
+                    + "     __||__    \\)\n"
+                    + "  []/______\\[] /\n"
+                    + "  / \\______/ \\/\n"
+                    + " /    /__\\\n"
+                    + "(\\   /____\\");
             System.out.println("         m                           \"\"#   \n"
                     + "         #       mmm   m   m   mmm     #   \n"
                     + "         #      #\"  #  \"m m\"  #\"  #    #   \n"
@@ -355,6 +372,15 @@ public class MoveGame {
     }
 
     private static void welcome() {
+        System.out.println(" _(\\    |@@|\n"
+                + "(__/\\__ \\--/ __\n"
+                + "   \\___|----|  |   __\n"
+                + "       \\ }{ /\\ )_ / _\\\n"
+                + "       /\\__/\\ \\__O (__\n"
+                + "      (--/\\--)    \\__/\n"
+                + "      _)(  )(_\n"
+                + "     `---''---`");
+
         System.out.println("m     m        \"\"#                               \n"
                 + "#  #  #  mmm     #     mmm    mmm   mmmmm   mmm  \n"
                 + "\" #\"# # #\"  #    #    #\"  \"  #\" \"#  # # #  #\"  # \n"
