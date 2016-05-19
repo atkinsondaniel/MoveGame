@@ -14,6 +14,8 @@ public class MoveGame {
     static Reg[] regEnemies;
     static int nFasEnemies = 0;
     static Fas[] fasEnemies;
+    static int nConsEnemies = 0;
+    static Cons[] consEnemies;
     //public static boolean[] rubbish;
     public static boolean play = true;
     public static String[][] coor = new String[30][30];
@@ -29,7 +31,7 @@ public class MoveGame {
 
     public static void game() {
         regEnemies = new Reg[nRegEnemies];
-
+        consEnemies = new Cons[nConsEnemies];
         fasEnemies = new Fas[nFasEnemies];
 
         makeEnemies();
@@ -142,15 +144,29 @@ public class MoveGame {
                 }
             }
         }
+        for (int i = 0; i < consEnemies.length; i++) {
+            if (!consEnemies[i].rubbish) {
+                if (x > consEnemies[i].x + 1) {
+                    consEnemies[i].x += consEnemies[i].moveVal;
+                } else if (x < consEnemies[i].x + 1) {
+                    consEnemies[i].x -= consEnemies[i].moveVal;
+                }
+                if (y > consEnemies[i].y + 1) {
+                    consEnemies[i].y += consEnemies[i].moveVal;
+                } else if (y < consEnemies[i].y + 1) {
+                    consEnemies[i].y -= consEnemies[i].moveVal;
+                }
+            }
+        }
         for (int i = 0; i < fasEnemies.length; i++) {
             if (!fasEnemies[i].rubbish) {
                 if (x > fasEnemies[i].x + 1) {
-                    fasEnemies[i].x += 1;
+                    fasEnemies[i].x += fasEnemies[i].moveVal;
                 } else if (x < fasEnemies[i].x + 1) {
                     fasEnemies[i].x -= fasEnemies[i].moveVal;
                 }
                 if (y > fasEnemies[i].y + 1) {
-                    fasEnemies[i].y += 1;
+                    fasEnemies[i].y += fasEnemies[i].moveVal;
                 } else if (y < fasEnemies[i].y + 1) {
                     fasEnemies[i].y -= fasEnemies[i].moveVal;
                 }
@@ -178,16 +194,25 @@ public class MoveGame {
     }
 
     public static boolean isDead(int pX, int pY) {
+        String robot = "      \\_/\n"
+                + "     (* *)\n"
+                + "    __)#(__\n"
+                + "   ( )...( )(_)\n"
+                + "   || |_| ||//\n"
+                + ">==() | | ()/\n"
+                + "    _(___)_\n"
+                + "   [-]   [-]";
+        String dead = "m     m                          #    \"               # \n"
+                + " \"m m\"   mmm   m   m          mmm#  mmm     mmm    mmm# \n"
+                + "  \"#\"   #\" \"#  #   #         #\" \"#    #    #\"  #  #\" \"# \n"
+                + "   #    #   #  #   #         #   #    #    #\"\"\"\"  #   # \n"
+                + "   #    \"#m#\"  \"mm\"#         \"#m##  mm#mm  \"#mm\"  \"#m## \n";
         boolean life = true;
         for (int i = 0; i < regEnemies.length; i++) {
             if (pX == regEnemies[i].x + 1 && pY == regEnemies[i].y + 1) {
                 life = false;
-                System.out.println("m     m                          #    \"               # \n"
-                        + " \"m m\"   mmm   m   m          mmm#  mmm     mmm    mmm# \n"
-                        + "  \"#\"   #\" \"#  #   #         #\" \"#    #    #\"  #  #\" \"# \n"
-                        + "   #    #   #  #   #         #   #    #    #\"\"\"\"  #   # \n"
-                        + "   #    \"#m#\"  \"mm\"#         \"#m##  mm#mm  \"#mm\"  \"#m## \n"
-                        + "You survied for " + nRegEnemies / 2 + " levels.");
+                System.out.println(robot);
+                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
                 break;
             }
 
@@ -195,20 +220,17 @@ public class MoveGame {
         for (int i = 0; i < fasEnemies.length; i++) {
             if (pX == fasEnemies[i].x + 1 && pY == fasEnemies[i].y + 1) {
                 life = false;
-                System.out.println("      \\_/\n"
-                        + "     (* *)\n"
-                        + "    __)#(__\n"
-                        + "   ( )...( )(_)\n"
-                        + "   || |_| ||//\n"
-                        + ">==() | | ()/\n"
-                        + "    _(___)_\n"
-                        + "   [-]   [-]");
-                System.out.println("m     m                          #    \"               # \n"
-                        + " \"m m\"   mmm   m   m          mmm#  mmm     mmm    mmm# \n"
-                        + "  \"#\"   #\" \"#  #   #         #\" \"#    #    #\"  #  #\" \"# \n"
-                        + "   #    #   #  #   #         #   #    #    #\"\"\"\"  #   # \n"
-                        + "   #    \"#m#\"  \"mm\"#         \"#m##  mm#mm  \"#mm\"  \"#m## \n"
-                        + "You survied for " + nRegEnemies / 2 + " levels.");
+                System.out.println(robot);
+                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
+                break;
+            }
+
+        }
+        for (int i = 0; i < consEnemies.length; i++) {
+            if (pX == consEnemies[i].x + 1 && pY == consEnemies[i].y + 1) {
+                life = false;
+                System.out.println(robot);
+                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
                 break;
             }
 
@@ -228,6 +250,10 @@ public class MoveGame {
         for (int i = 0; i < fasEnemies.length; i++) {
 
             fasEnemies[i] = new Fas(random.nextInt(25) + 2, random.nextInt(25) + 2);
+        }
+        for (int i = 0; i < consEnemies.length; i++) {
+
+            consEnemies[i] = new Cons(random.nextInt(25) + 2, random.nextInt(25) + 2);
         }
     }
 
@@ -257,6 +283,12 @@ public class MoveGame {
                     }
 
                 }
+                for (int r = 0; r < consEnemies.length; r++) {
+                    if (q == consEnemies[r].x && i == consEnemies[r].y) {
+                        coor[q][i] = consEnemies[r].symbol;
+                    }
+
+                }
                 System.out.print(coor[q][i]);
             }
             System.out.println("");
@@ -273,7 +305,7 @@ public class MoveGame {
     public static void checkCollisions() {
         for (int i = 0; i < regEnemies.length; i++) {
             for (int j = i + 1; j < regEnemies.length; j++) {
-                if (regEnemies[i].x == regEnemies[j].x && regEnemies[i].y == regEnemies[j].y) {
+                if (regEnemies[i].x == regEnemies[j].x && regEnemies[i].y == regEnemies[j].y) { //comparing reg vs reg
                     regEnemies[i].rubbish = true;
                     regEnemies[i].symbol = "R ";
                     regEnemies[j].rubbish = true;
@@ -281,29 +313,55 @@ public class MoveGame {
                 }
                 for (int q = 0; q < fasEnemies.length; q++) {
 
-                    if (regEnemies[i].x == fasEnemies[q].x && regEnemies[i].y == fasEnemies[q].y) {
+                    if (regEnemies[i].x == fasEnemies[q].x && regEnemies[i].y == fasEnemies[q].y) { //comparing reg vs fast
                         regEnemies[i].rubbish = true;
                         regEnemies[i].symbol = "R ";
                         fasEnemies[q].rubbish = true;
                         fasEnemies[q].symbol = "R ";
                     }
-                    if (regEnemies[j].x == fasEnemies[q].x && regEnemies[j].y == fasEnemies[q].y) {
+                    if (regEnemies[j].x == fasEnemies[q].x && regEnemies[j].y == fasEnemies[q].y) { //same thing for some reason
                         regEnemies[j].rubbish = true;
                         regEnemies[j].symbol = "R ";
                         fasEnemies[q].rubbish = true;
                         fasEnemies[q].symbol = "R ";
                     }
                     for (int t = q + 1; t < fasEnemies.length; t++) {
-                        if (regEnemies[i].x == regEnemies[j].x && regEnemies[i].y == regEnemies[j].y) {
+                        if (fasEnemies[q].x == fasEnemies[t].x && fasEnemies[q].y == fasEnemies[t].y) { //comparing fast vs fast
                             fasEnemies[q].rubbish = true;
                             fasEnemies[q].symbol = "R ";
                             fasEnemies[t].rubbish = true;
                             fasEnemies[t].symbol = "R ";
                         }
                     }
+                    for (int o = 0; o < consEnemies.length; o++) {
 
+                        if (regEnemies[i].x == consEnemies[o].x && regEnemies[i].y == consEnemies[o].y) { // comparing cons vs reg
+                            regEnemies[i].rubbish = false;
+                            regEnemies[i].symbol = "E ";
+                        }
+                        if (regEnemies[j].x == consEnemies[o].x && regEnemies[j].y == consEnemies[o].y) { // comparing cons vs reg
+                            regEnemies[j].rubbish = false;
+                            regEnemies[j].symbol = "E ";
+                        }
+                        if (fasEnemies[q].x == consEnemies[o].x && fasEnemies[q].y == consEnemies[o].y) { // comparing cons vs fas
+                            fasEnemies[q].rubbish = false;
+                            fasEnemies[q].symbol = "F ";
+                        }
+
+                    }
                 }
 
+            }
+
+        }
+        for (int i = 0; i < consEnemies.length; i++) {
+            for (int j = i + 1; j < consEnemies.length; j++) { //comparing cons vs cons
+                if (consEnemies[i].x == consEnemies[j].x && consEnemies[i].y == consEnemies[j].y) {
+                    consEnemies[i].rubbish = true;
+                    consEnemies[i].symbol = "R ";
+                    consEnemies[j].rubbish = true;
+                    consEnemies[j].symbol = "R ";
+                }
             }
         }
 
@@ -333,6 +391,11 @@ public class MoveGame {
         }
         for (int i = 0; i < fasEnemies.length; i++) {
             if (!fasEnemies[i].rubbish) {
+                winner = false;
+            }
+        }
+        for (int i = 0; i < consEnemies.length; i++) {
+            if (!consEnemies[i].rubbish) {
                 winner = false;
             }
         }
@@ -367,6 +430,9 @@ public class MoveGame {
         play = true;
         nRegEnemies += 2;
         nFasEnemies += 1;
+        if ((nRegEnemies / 2) % 4 == 0) {
+            nConsEnemies += 2;
+        }
         System.out.println("Welcome to level " + nRegEnemies / 2);
         game();
     }
@@ -434,5 +500,12 @@ class Fas extends Enemy {
 
     public Fas(int xLoc, int yLoc) {
         super(xLoc, yLoc, false, 2, "F ");
+    }
+}
+
+class Cons extends Enemy {
+
+    public Cons(int xLoc, int yLoc) {
+        super(xLoc, yLoc, false, 1, "C ");
     }
 }
