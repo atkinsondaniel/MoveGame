@@ -10,11 +10,10 @@ import java.util.Scanner;
 
 public class MoveGame {
 
-    static int nRegEnemies = 2;
-    static Reg[] regEnemies;
-    static int nFasEnemies = 0;
+    static Reg[] regEnemies; //ARRAY TO TRACK ENEMIES 5pts
+
     static Fas[] fasEnemies;
-    static int nConsEnemies = 0;
+
     static Cons[] consEnemies;
     //public static boolean[] rubbish;
     public static boolean play = true;
@@ -30,9 +29,9 @@ public class MoveGame {
     }
 
     public static void game() {
-        regEnemies = new Reg[nRegEnemies];
-        consEnemies = new Cons[nConsEnemies];
-        fasEnemies = new Fas[nFasEnemies];
+        regEnemies = new Reg[playerguy.nRegEnemies];
+        consEnemies = new Cons[playerguy.nConsEnemies];
+        fasEnemies = new Fas[playerguy.nFasEnemies];
 
         makeEnemies();
 
@@ -133,7 +132,7 @@ public class MoveGame {
         for (int i = 0; i < regEnemies.length; i++) {
             if (!regEnemies[i].rubbish) {
                 if (x > regEnemies[i].x + 1) {
-                    regEnemies[i].x += 1;
+                     regEnemies[i].x += 1;
                 } else if (x < regEnemies[i].x + 1) {
                     regEnemies[i].x -= regEnemies[i].moveVal;
                 }
@@ -142,6 +141,8 @@ public class MoveGame {
                 } else if (y < regEnemies[i].y + 1) {
                     regEnemies[i].y -= regEnemies[i].moveVal;
                 }
+                isLocValid(regEnemies[i].x);
+                isLocValid(regEnemies[i].y);
             }
         }
         for (int i = 0; i < consEnemies.length; i++) {
@@ -156,6 +157,8 @@ public class MoveGame {
                 } else if (y < consEnemies[i].y + 1) {
                     consEnemies[i].y -= consEnemies[i].moveVal;
                 }
+                isLocValid(consEnemies[i].x);
+                isLocValid(consEnemies[i].y);
             }
         }
         for (int i = 0; i < fasEnemies.length; i++) {
@@ -170,6 +173,8 @@ public class MoveGame {
                 } else if (y < fasEnemies[i].y + 1) {
                     fasEnemies[i].y -= fasEnemies[i].moveVal;
                 }
+                isLocValid(fasEnemies[i].x);
+                isLocValid(fasEnemies[i].y);
             }
         }
     }
@@ -212,7 +217,7 @@ public class MoveGame {
             if (pX == regEnemies[i].x + 1 && pY == regEnemies[i].y + 1) {
                 life = false;
                 System.out.println(robot);
-                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
+                System.out.println(dead + "You survied for " + playerguy.nRegEnemies / 2 + " levels.");
                 break;
             }
 
@@ -221,7 +226,7 @@ public class MoveGame {
             if (pX == fasEnemies[i].x + 1 && pY == fasEnemies[i].y + 1) {
                 life = false;
                 System.out.println(robot);
-                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
+                System.out.println(dead + "You survied for " + playerguy.nRegEnemies / 2 + " levels.");
                 break;
             }
 
@@ -230,7 +235,7 @@ public class MoveGame {
             if (pX == consEnemies[i].x + 1 && pY == consEnemies[i].y + 1) {
                 life = false;
                 System.out.println(robot);
-                System.out.println(dead + "You survied for " + nRegEnemies / 2 + " levels.");
+                System.out.println(dead + "You survied for " + playerguy.nRegEnemies / 2 + " levels.");
                 break;
             }
 
@@ -367,7 +372,7 @@ public class MoveGame {
 
     }
 
-    public static void teleport(boolean safe) {
+    public static void teleport(boolean safe) { //PLAYER CAN USE SKILLS 5pts
         Random random = new Random();
         if (safe) {
             System.out.println("X Coordinate:");
@@ -425,20 +430,17 @@ public class MoveGame {
         return !winner;
     }
 
-    public static void nextLevel() {
+    public static void nextLevel() { //MULTIPLE LEVELS 10pts
 
         play = true;
-        nRegEnemies += 2;
-        nFasEnemies += 1;
-        if ((nRegEnemies / 2) % 4 == 0) {
-            nConsEnemies += 2;
+        playerguy.nRegEnemies += 2; //GAME GETS HARDER 5pts
+        playerguy.nFasEnemies += 1;
+        if ((playerguy.nRegEnemies / 2) % 4 == 0) {
+            playerguy.nConsEnemies += 2;
         }
-        System.out.println("Welcome to level " + nRegEnemies / 2);
-        game();
-    }
-
-    private static void welcome() {
-        System.out.println(" _(\\    |@@|\n"
+        if (playerguy.nRegEnemies == 8) {
+            System.out.println("Look out it's a constructor");
+            System.out.println(" _(\\    |@@|\n" //ASCII ART 5pts
                 + "(__/\\__ \\--/ __\n"
                 + "   \\___|----|  |   __\n"
                 + "       \\ }{ /\\ )_ / _\\\n"
@@ -446,6 +448,16 @@ public class MoveGame {
                 + "      (--/\\--)    \\__/\n"
                 + "      _)(  )(_\n"
                 + "     `---''---`");
+            System.out.println("If they collide when broken robots \n they will be rebuilt! \n The only way to kill a "
+                    + "constructor is with a constructor.");
+            
+        }
+        System.out.println("Welcome to level " + playerguy.nRegEnemies / 2);
+        game();
+    }
+
+    private static void welcome() {
+        
 
         System.out.println("m     m        \"\"#                               \n"
                 + "#  #  #  mmm     #     mmm    mmm   mmmmm   mmm  \n"
@@ -457,13 +469,25 @@ public class MoveGame {
         System.out.println("\"T\" will allow you to teleport to a certain location.");
         System.out.println("\"R\" will teleport you to a random location.");
     }
+
+    public static int isLocValid(int x) { //walls block enemy movement 5pts
+        if (x == 0) {
+            x += 1;
+        } else if (x == 30) {
+            x -= 1;
+        }
+        return x;
+    }
 }
 
-class Player {
+class Player { //PLAYER CONVERTED TO OBJECT 10pts
 
     int xLoc;
     int yLoc;
     int nTeleports;
+    static int nRegEnemies = 2;
+    static int nFasEnemies = 0;
+    static int nConsEnemies = 0;
 
     public Player(int x, int y) {
         this.xLoc = x;
@@ -472,7 +496,7 @@ class Player {
     }
 }
 
-class Enemy {
+class Enemy { //ENEMY CLASS 5pts
 
     int x;
     int y;
@@ -489,14 +513,14 @@ class Enemy {
     }
 }
 
-class Reg extends Enemy {
+class Reg extends Enemy { //MULTIPLE ENEMY CLASSES 5pts
 
     public Reg(int xLoc, int yLoc) {
         super(xLoc, yLoc, false, 1, "E ");
     }
 }
 
-class Fas extends Enemy {
+class Fas extends Enemy { //ENEMY SUBCLASSES 7pts
 
     public Fas(int xLoc, int yLoc) {
         super(xLoc, yLoc, false, 2, "F ");
