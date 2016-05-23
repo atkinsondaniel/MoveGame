@@ -307,7 +307,7 @@ public class MoveGame {
         }
     }
 
-    public static void checkCollisions() {
+    public static void checkCollisions() { //turns enemies into traps 5pts
         for (int i = 0; i < regEnemies.length; i++) {
             for (int j = i + 1; j < regEnemies.length; j++) {
                 if (regEnemies[i].x == regEnemies[j].x && regEnemies[i].y == regEnemies[j].y) { //comparing reg vs reg
@@ -431,7 +431,7 @@ public class MoveGame {
     }
 
     public static void nextLevel() { //MULTIPLE LEVELS 10pts
-
+        playerguy.nTeleports += 1; //GREATER PLAYER SKILLS 10pts
         play = true;
         playerguy.nRegEnemies += 2; //GAME GETS HARDER 5pts
         playerguy.nFasEnemies += 1;
