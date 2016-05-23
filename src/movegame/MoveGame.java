@@ -338,7 +338,7 @@ public class MoveGame {
                             fasEnemies[t].symbol = "R ";
                         }
                     }
-                    for (int o = 0; o < consEnemies.length; o++) {
+                    for (int o = 0; o < consEnemies.length; o++) { //enemy skills, reviving dead enemies 5pts
 
                         if (regEnemies[i].x == consEnemies[o].x && regEnemies[i].y == consEnemies[o].y) { // comparing cons vs reg
                             regEnemies[i].rubbish = false;
