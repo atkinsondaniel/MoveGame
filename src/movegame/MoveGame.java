@@ -20,7 +20,7 @@ public class MoveGame {
     public static String[][] coor = new String[30][30];
     public static Scanner scanner = new Scanner(System.in);
     public static boolean wonPrevLev = false;
-
+    public static Booster booster;
     static Player playerguy = new Player(10, 10);
 
     public static void main(String[] args) {
@@ -260,6 +260,7 @@ public class MoveGame {
 
             consEnemies[i] = new Cons(random.nextInt(25) + 2, random.nextInt(25) + 2);
         }
+        booster = new Booster(random.nextInt(25) + 2, random.nextInt(25) + 2);
     }
 
     public static void runGame() {
@@ -270,11 +271,14 @@ public class MoveGame {
                 if (q == playerguy.xLoc - 1 && i == playerguy.yLoc - 1) {
                     coor[q][i] = "U ";
 
-                } else if (q == 0 || q == 29 || i == 0 || i == 29) {
+                } else if (q == 0 || q == 29 || i == 0 || i == 29) { //defined level maps 5pts
                     coor[q][i] = "X ";
 
                 } else {
                     coor[q][i] = ". ";
+                }
+                if (q == booster.x - 1 && i == booster.y && booster.isUp) {
+                    coor[q][i] = booster.sym;
                 }
                 for (int r = 0; r < regEnemies.length; r++) {
                     if (q == regEnemies[r].x && i == regEnemies[r].y) {
@@ -369,7 +373,10 @@ public class MoveGame {
                 }
             }
         }
-
+        if (playerguy.xLoc == booster.x && playerguy.yLoc == booster.y && booster.isUp) {
+            booster.isUp = false;
+            playerguy.nTeleports += 1;
+        }
     }
 
     public static void teleport(boolean safe) { //PLAYER CAN USE SKILLS 5pts
@@ -431,7 +438,6 @@ public class MoveGame {
     }
 
     public static void nextLevel() { //MULTIPLE LEVELS 10pts
-        playerguy.nTeleports += 1; //GREATER PLAYER SKILLS 10pts
         play = true;
         playerguy.nRegEnemies += 2; //GAME GETS HARDER 5pts
         playerguy.nFasEnemies += 1;
@@ -531,5 +537,16 @@ class Cons extends Enemy {
 
     public Cons(int xLoc, int yLoc) {
         super(xLoc, yLoc, false, 1, "C ");
+    }
+}
+class Booster { //loot classes 5pts
+    int x;
+    int y;
+    boolean isUp;
+    String sym = "T ";
+    public Booster(int xLoc, int yLoc) {
+        this.x = xLoc;
+        this.y = yLoc;
+        this.isUp = true;
     }
 }
